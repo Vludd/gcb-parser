@@ -1,13 +1,37 @@
 import uvicorn
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes import api_router
-from app.core.managers.redis_manager import RedisManager
-from app.core.utils.logger import logger
 import app.config as cfg
+import app.dependencies as dep
 
-app = FastAPI()
+import logging
+logger = logging.getLogger(__name__)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await dep.init()
+    
+    if not dep.SESSION_MANAGER:
+        logger.error("❌ SESSION_MANAGER not initialized!")
+        
+    if not dep.WORKERS_MANAGER:
+        logger.error("❌ WORKERS_MANAGER not initialized!")
+        
+    if not dep.REDIS_CLIENT:
+        logger.error("❌ REDIS_CLIENT not initialized!")
+    
+    # logger.debug("Server is starting with Middlwares..." )
+    # logger.debug(f"ALLOW_ORIGINS: {cfg.ALLOW_ORIGINS}")
+    # logger.debug(f"ALLOW_CREDENTIALS: {cfg.ALLOW_CREDENTIALS}")
+    # logger.debug(f"ALLOW_METHODS: {cfg.ALLOW_METHODS}")
+    # logger.debug(f"ALLOW_HEADERS: {cfg.ALLOW_HEADERS}")
+    yield
+    await dep.WORKERS_MANAGER.shutdown()
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,18 +42,6 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix="/api")
-
-async def initialize():
-    redis_manager = RedisManager()
-    import app.core.managers.workers_manager
-    await redis_manager.connect()
     
-    logger.debug("Server is starting with Middlwares..." )
-    logger.debug(f"ALLOW_ORIGINS: {cfg.ALLOW_ORIGINS}")
-    logger.debug(f"ALLOW_CREDENTIALS: {cfg.ALLOW_CREDENTIALS}")
-    logger.debug(f"ALLOW_METHODS: {cfg.ALLOW_METHODS}")
-    logger.debug(f"ALLOW_HEADERS: {cfg.ALLOW_HEADERS}")
-
 async def main():
-    await initialize()
     uvicorn.run(cfg.API_MAIN_MODULE, host=cfg.API_HOST, port=cfg.API_PORT, reload=cfg.LOGGER_LEVEL == 'DEBUG')

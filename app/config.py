@@ -27,7 +27,7 @@ APP_SHORT_NAMES = os.getenv("APP_SHORT_NAMES", "").split(',')
 APP_API_IDS = os.getenv("APP_API_IDS", "").split(',')
 APP_API_HASHES = os.getenv("APP_API_HASHES", "").split(',')
 
-API_KEYS = [
+API_KEYS: list[MAppData] = [
     MAppData(
         title=APP_TITLES[i],
         short_name=APP_SHORT_NAMES[i],
