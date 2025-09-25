@@ -9,4 +9,3 @@ class MTelegramClient(BaseModel):
     app_short: str                              # короткое название приложения
     isAvailable: bool = True                    # статус доступности клиента
     isBusy: bool = False                        # статус занятости клиента
-    

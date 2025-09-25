@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from app.models.app_data import MAppData
+from app.models.tl_app_data import MTelegramAppData
 
 load_dotenv()
 
@@ -18,7 +18,7 @@ ALLOW_HEADERS = os.getenv("ALLOW_HEADERS", "*").split(',')
 
 # ============ GKB CONFIG ============
 
-GKB_TL_BOT = os.getenv("GKB_TL_BOT")
+GKB_TL_BOT = os.getenv("GKB_TL_BOT", "")
 
 # ============ TL CLIENTS CONFIG ============
 
@@ -27,8 +27,8 @@ APP_SHORT_NAMES = os.getenv("APP_SHORT_NAMES", "").split(',')
 APP_API_IDS = os.getenv("APP_API_IDS", "").split(',')
 APP_API_HASHES = os.getenv("APP_API_HASHES", "").split(',')
 
-API_KEYS: list[MAppData] = [
-    MAppData(
+API_KEYS: list[MTelegramAppData] = [
+    MTelegramAppData(
         title=APP_TITLES[i],
         short_name=APP_SHORT_NAMES[i],
         api_id=int(APP_API_IDS[i]),

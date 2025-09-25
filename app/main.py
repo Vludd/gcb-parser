@@ -23,11 +23,6 @@ async def lifespan(app: FastAPI):
     if not dep.REDIS_CLIENT:
         logger.error("❌ REDIS_CLIENT not initialized!")
     
-    # logger.debug("Server is starting with Middlwares..." )
-    # logger.debug(f"ALLOW_ORIGINS: {cfg.ALLOW_ORIGINS}")
-    # logger.debug(f"ALLOW_CREDENTIALS: {cfg.ALLOW_CREDENTIALS}")
-    # logger.debug(f"ALLOW_METHODS: {cfg.ALLOW_METHODS}")
-    # logger.debug(f"ALLOW_HEADERS: {cfg.ALLOW_HEADERS}")
     yield
     await dep.WORKERS_MANAGER.shutdown()
 
