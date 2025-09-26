@@ -1,2 +1,2 @@
-# gkb-parser
-GKB TL Bot Parser with multiple Telegram Apps
+# gcb-parser
+GCB TL Bot Parser with multiple Telegram API Apps (MTProto)
